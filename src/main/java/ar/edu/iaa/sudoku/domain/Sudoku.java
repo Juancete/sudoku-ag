@@ -37,15 +37,15 @@ public class Sudoku {
 //		this.evaluationMethod = evaluationMethod;
 //	}
 
-	public boolean findValueInFile(int valueTofind, int file) {
-		return values.stream().filter(x -> x.equalsFile(file) && x.getValue() == valueTofind).count() != 1;
+	public boolean isValueInRow(int valueTofind, int file) {
+		return values.stream().filter(x -> x.equalsRow(file) && x.getValue() == valueTofind).count() != 1;
 	}
 
-	public boolean findValueInColumn(int valueTofind, int column) {
+	public boolean isValueInColumn(int valueTofind, int column) {
 		return values.stream().filter(x -> x.equalsColumn(column) && x.getValue() == valueTofind).count() != 1;
 	}
 
-	public boolean findValueInQuadrant(int valueTofind, Quadrant aQuadrant) {
+	public boolean isValueInQuadrant(int valueTofind, Quadrant aQuadrant) {
 		int apariciones = 0 ;
 		for (int i = aQuadrant.getOffset_file(); i < (3 + aQuadrant.getOffset_file()); i++)
 			for (int j = aQuadrant.getOffset_column(); j < (3 + aQuadrant.getOffset_column()); j++){
@@ -120,7 +120,7 @@ public class Sudoku {
 	}
 
 	public int getValue(int file, int column) {
-		Optional<Cell> celda = this.values.stream().filter(x -> x.getColumn() == column && x.getFile() == file).findFirst();
+		Optional<Cell> celda = this.values.stream().filter(x -> x.getColumn() == column && x.getRow() == file).findFirst();
 		return celda.get().getValue();
 	}
 

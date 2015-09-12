@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-import ar.edu.iaa.sudoku.jgap.ConfigurationFactory;
+import javax.management.RuntimeErrorException;
 
 import org.jgap.Configuration;
 import org.jgap.Genotype;
@@ -13,39 +13,20 @@ import org.jgap.IChromosome;
 import ar.edu.iaa.sudoku.commons.Log;
 import ar.edu.iaa.sudoku.domain.PureEvaluate;
 import ar.edu.iaa.sudoku.domain.Sudoku;
+import ar.edu.iaa.sudoku.jgap.ConfigurationFactory;
 
 public class Main {
-
+	public static int maximasEvoluciones;
+	public static String archivoLog = "";
 	public static void main(String[] args) throws Exception {
-		int maximasEvoluciones;
-		String archivoLog = "";
+		
+		
 		Sudoku sudokuAResolver = null;
-
-		System.out.println("Sudoku V1.0");
-		if (args.length == 1) { // si hay 1 parámetro
-			sudokuAResolver = new Sudoku(args[0]);
-		} else {
-			System.out
-					.println("Error en los parámetros. Debe escribir por ejemplo: sudoku string");
-			return;
-		}
+		sudokuAResolver = new Sudoku(readInput());
 		sudokuAResolver.setEvaluationMethod(new PureEvaluate());
-		Properties prop = new Properties();
-		InputStream input = null;
-		try {
-			input = new FileInputStream("config.properties");
-			prop.load(input);
-		} catch (Exception e) {
-			System.out
-					.println("Error en la lectura del archivo de configuración config.properties.");
-			return;
-		}
-		maximasEvoluciones = Integer.parseInt(prop
-				.getProperty("maximasEvoluciones"));
-		archivoLog = prop.getProperty("archivoDeLog");
+		
 
-		ConfigurationFactory configurationFactory = new ConfigurationFactory(
-				prop, sudokuAResolver);
+		ConfigurationFactory configurationFactory=readConfig(sudokuAResolver);
 		Configuration conf = configurationFactory.getConfiguration(0);
 
 		Genotype genotipe = Genotype.randomInitialGenotype(conf);
@@ -54,7 +35,7 @@ public class Main {
 		int i;
 		Log logueador = new Log(archivoLog);
 		System.out.println("\n");
-		for (i = 0; i < maximasEvoluciones; i++) {
+		for (i = 0; true; i++) {
 
 //			for(int j=0;j<15;j++)
 //				System.out.print("\b");
@@ -85,6 +66,39 @@ public class Main {
 		if (i == maximasEvoluciones)
 			System.out.println("perdí :(");
 		logueador.close();
+	}
+
+	private static String readInput() {
+		Properties prop = new Properties();
+		InputStream input = null;
+		try {
+			input = new FileInputStream("input.properties");
+			prop.load(input);
+		} catch (Exception e) {
+			System.out
+					.println("Error en la lectura del archivo de configuración config.properties.");
+			throw new RuntimeException(e);
+		}
+		System.out.println("Sudoku V1.0");
+		return prop.getProperty("input");
+	}
+	
+	private static ConfigurationFactory readConfig(Sudoku sudokuAResolver){
+		Properties prop = new Properties();
+		InputStream input = null;
+		try {
+			input = new FileInputStream("config.properties");
+			prop.load(input);
+		} catch (Exception e) {
+			System.out
+					.println("Error en la lectura del archivo de configuración config.properties.");
+			throw new RuntimeException(e);
+		}
+		maximasEvoluciones = Integer.parseInt(prop
+				.getProperty("maximasEvoluciones"));
+		archivoLog = prop.getProperty("archivoDeLog");
+		return new ConfigurationFactory(
+				prop, sudokuAResolver);
 	}
 
 }
