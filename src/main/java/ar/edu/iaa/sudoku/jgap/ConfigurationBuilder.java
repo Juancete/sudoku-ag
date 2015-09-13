@@ -70,7 +70,7 @@ public class ConfigurationBuilder {
 
 	public ConfigurationBuilder SetMutationOperator(int a_desiredMutationRate) {
 		try {
-			this.configuration.addGeneticOperator(new MutationOperator(this.configuration, a_desiredMutationRate));
+			this.configuration.addGeneticOperator(new MutationOperator(configuration, 10));
 		} catch (InvalidConfigurationException e) {
 			throw new ConfigurationException(e.getMessage());
 		}

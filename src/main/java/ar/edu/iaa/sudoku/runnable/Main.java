@@ -24,8 +24,8 @@ public class Main {
 		Sudoku sudokuAResolver = null;
 		sudokuAResolver = new Sudoku(readInput());
 		sudokuAResolver.setEvaluationMethod(new PureEvaluate());
+//		System.out.println(sudokuAResolver.evaluate());
 		
-
 		ConfigurationFactory configurationFactory=readConfig(sudokuAResolver);
 		Configuration conf = configurationFactory.getConfiguration(0);
 
@@ -50,10 +50,10 @@ public class Main {
 
 			//logueador.escribir(mejor, bestSolutionSoFar.getFitnessValue(), i);
 
-			if (mejor.evaluate()==81) {
+			if (mejor.evaluate()==5000) {
 				System.out.println("\nGané en la evolución " + i
 						+ "!!!!!! ");
-				//mejor.print();
+				mejor.print();
 				break;
 			}
 			String value = "\nFittness de la mejor solución: " + bestSolutionSoFar.getFitnessValue();
