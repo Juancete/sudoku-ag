@@ -8,6 +8,7 @@ import ar.edu.iaa.sudoku.domain.Sudoku;
 
 public class ConfigurationBuilder {
 	private Configuration configuration;
+	private Sudoku target;
 
 	public ConfigurationBuilder() {
 		this.configuration = new Configuration();
@@ -53,7 +54,7 @@ public class ConfigurationBuilder {
 
 	public ConfigurationBuilder SetCrossoverOperator(){
 		try {
-			this.configuration.addGeneticOperator(new CrossoverOperator(this.configuration, 0.35d));
+			this.configuration.addGeneticOperator(new CrossoverOperator(this.configuration, 30));
 		} catch (InvalidConfigurationException e) {
 			throw new ConfigurationException(e.getMessage());
 		}
@@ -70,7 +71,9 @@ public class ConfigurationBuilder {
 
 	public ConfigurationBuilder SetMutationOperator(int a_desiredMutationRate) {
 		try {
-			this.configuration.addGeneticOperator(new MutationOperator(configuration, 10));
+			SudokuMutation mutationOperator = new SudokuMutation(configuration, a_desiredMutationRate);
+			mutationOperator.setSudoku(this.target);
+			this.configuration.addGeneticOperator(mutationOperator);
 		} catch (InvalidConfigurationException e) {
 			throw new ConfigurationException(e.getMessage());
 		}
@@ -135,5 +138,10 @@ public class ConfigurationBuilder {
 		public ConfigurationException(String message) {
 			super(message);
 		}
+	}
+
+	public void setSudokuTarget(Sudoku target) {
+		this.target = target;
+		
 	}
 }

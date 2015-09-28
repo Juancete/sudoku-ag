@@ -41,8 +41,8 @@ public class Main {
 //				System.out.print("\b");
 			Configuration.reset();
 
-			genotipe = new Genotype(configurationFactory.getConfiguration(i
-					/ (double) maximasEvoluciones), genotipe.getPopulation());
+			//genotipe = new Genotype(configurationFactory.getConfiguration(i
+			//		/ (double) maximasEvoluciones), genotipe.getPopulation());
 
 			genotipe.evolve();
 			bestSolutionSoFar = genotipe.getFittestChromosome();

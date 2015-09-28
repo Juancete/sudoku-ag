@@ -3,7 +3,8 @@ package ar.edu.iaa.sudoku.domain;
 import ar.edu.iaa.sudoku.exeptions.BussinessException;
 
 public class Cell {
-
+	
+	private int GenPosition;
     private int row;
     private int column;
     private boolean blocked;
@@ -81,6 +82,12 @@ public class Cell {
 	}
 	public int getLinearPosition() {
 		return row * 9 + column;
+	}
+	public int getGenPosition() {
+		return GenPosition;
+	}
+	public void setGenPosition(int genPosition) {
+		GenPosition = genPosition;
 	}
 
 }

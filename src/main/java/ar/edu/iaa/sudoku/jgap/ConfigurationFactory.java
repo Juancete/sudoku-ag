@@ -19,6 +19,7 @@ public class ConfigurationFactory {
 
 	public Configuration getConfiguration(double runRate){
 		this.builder = new ConfigurationBuilder();
+		this.builder.setSudokuTarget(this.target);
 		int poblacionSize = Integer.parseInt(properties.getProperty("poblacionSize"));
 
 		this.setSelector();

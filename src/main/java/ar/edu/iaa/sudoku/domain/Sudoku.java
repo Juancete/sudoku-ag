@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import org.jgap.Gene;
 
 public class Sudoku {
 	private List<Cell> values;
+	private List<Cell> cellsToMutate;
 	private EvaluationMethod evaluationMethod;
 
 	/*
@@ -33,29 +35,50 @@ public class Sudoku {
 		}
 	}
 
-//	public Sudoku(Gene[] genes, PureEvaluate evaluationMethod) {
-//		this(genes);
-//		this.evaluationMethod = evaluationMethod;
-//	}
 
 	public double getRepeatedForRow(int valueTofind, int row) {
-		return (double)values.stream().filter(x -> x.equalsRow(row) && x.getValue() == valueTofind).count()==0?0:(double)values.stream().filter(x -> x.equalsRow(row) && x.getValue() == valueTofind).count()-1;
+		double result = (double)values.stream().filter(x -> x.equalsRow(row) && x.getValue() == valueTofind).count()==0?0:(double)values.stream().filter(x -> x.equalsRow(row) && x.getValue() == valueTofind).count()-1;
+		if (result > 0)
+			this.cellsToMutate.add(this.getCellInRow( valueTofind,row,false));
+		return result; 
+	}
+
+	private Cell getCellInRow(int valueTofind, int row, boolean getBlocked) {
+		Cell cellRepeated = null;
+		for (int i = 0 ; i < 9 ; i ++){
+			if (this.getValue(row, i) == valueTofind && (getBlocked || !this.getCell(row * 9 + i).isBlocked()))
+				return this.getCell(row * 9 + i);
+		}
+		return cellRepeated;
 	}
 
 	public double getRepeatedForColumn(int valueTofind, int column) {
-		return (double)values.stream().filter(x -> x.equalsColumn(column) && x.getValue() == valueTofind).count()==0?0:(double)values.stream().filter(x -> x.equalsColumn(column) && x.getValue() == valueTofind).count()-1;
+		double result = (double)values.stream().filter(x -> x.equalsColumn(column) && x.getValue() == valueTofind).count()==0?0:(double)values.stream().filter(x -> x.equalsColumn(column) && x.getValue() == valueTofind).count()-1;
+		if (result > 0)
+			this.cellsToMutate.add(this.getCellInColumn( valueTofind,column,false));
+		return result;		
 	}
-
+	
 	public double getValueInQuadrant(int valueTofind, Quadrant aQuadrant) {
 		int apariciones = 0 ;
 		for (int i = aQuadrant.getOffset_file(); i < (3 + aQuadrant.getOffset_file()); i++)
 			for (int j = aQuadrant.getOffset_column(); j < (3 + aQuadrant.getOffset_column()); j++){
 				if (this.getValue(i, j)==valueTofind)
 					apariciones = apariciones + 1; // || evaluateKey(new Cell(i, j), valueTofind);
+					
 			}
 		return apariciones-1;
 	}
 	
+	private Cell getCellInColumn(int valueTofind, int column, boolean getBlocked) {
+		Cell cellRepeated = null;
+		for (int i = 0 ; i < 9 ; i ++){
+			if (this.getValue(i, column) == valueTofind && (getBlocked || !this.getCell(i * 9 + column).isBlocked()))
+				return this.getCell(i * 9 + column);
+		}
+		return cellRepeated;
+	}
+
 	public double getSeenQuantity(int valueTofind) {
 		int apariciones = 0 ;
 		for (int i = 0; i < 9; i++)
@@ -66,6 +89,103 @@ public class Sudoku {
 		return apariciones;
 	}
 
+	public int getValue(int file, int column) {
+		Optional<Cell> celda = this.values.stream().filter(x -> x.getColumn() == column && x.getRow() == file).findFirst();
+		return celda.get().getValue();
+	}
+
+	public int getValue(int i) {
+		Optional<Cell> celda = this.values.stream().filter(x -> x.getLinearPosition() == i).findFirst();
+		return celda.get().getValue();
+	}
+
+	public double evaluate() {
+		this.cellsToMutate = new ArrayList<Cell>();
+		return this.getEvaluationMethod().evaluate(this);
+	}
+
+	public EvaluationMethod getEvaluationMethod() {
+		return evaluationMethod;
+	}
+
+	public void setEvaluationMethod(EvaluationMethod evaluationMethod) {
+		this.evaluationMethod = evaluationMethod;
+	}
+	public Cell getCell(int position){
+		return this.values.get(position);
+	}
+	public void setGene(int[] genes) {
+		int insertionPosition = 0;
+		for (int i = 0; i < genes.length; i++){
+			while(this.values.get(insertionPosition).isBlocked()){
+				insertionPosition ++;	
+			}
+			this.values.get(insertionPosition).setValue(genes[i]);
+			this.values.get(insertionPosition).setGenPosition(i);
+			insertionPosition ++;
+		}
+	}
+	public Sudoku setGene(Gene[] genes) {
+		int insertionPosition = 0;
+		for (int i = 0; i < genes.length; i++){
+			while(this.values.get(insertionPosition).isBlocked()){
+				insertionPosition ++;	
+			}
+			this.values.get(insertionPosition).setValue((int) genes[i].getAllele());
+			this.values.get(insertionPosition).setGenPosition(i);
+			insertionPosition ++;
+		}
+		return this;
+	}
+
+	public int getFreeSpaces() {
+		return 81 - (int) this.values.stream().filter(x -> x.isBlocked()).count();
+	}
+	
+	public Cell getFirstRepeatCell(){
+		return this.cellsToMutate.get(0);
+	}
+	public Cell getRepeatCell(int position){
+		return this.cellsToMutate.get(position);
+	}
+	public int getCellValue(Cell aCell) {
+		return this.getFirstRepeatCell().getGenPosition();
+	}
+	public int getRepeatValueSolution(Cell aCell) {
+		int returnValue = this.findValuesNotFoundInRow(aCell.getRow());
+		if (returnValue == 0)
+			returnValue = this.findValuesNotFoundInColum(aCell.getColumn());
+		if (returnValue == 0)
+			returnValue = new Random().nextInt(10);
+		return returnValue;
+	}
+	public int getCellToMutateSize(){
+		return cellsToMutate.size();
+	}
+	private int findValuesNotFoundInColum(int col) {
+		int returnValue = 0;
+		for (int i = 1 ; i< 10; i++){
+			if (this.getCellInColumn(i, col, true) == null )
+				returnValue = i;
+		}
+		return returnValue;
+	}
+	
+	private int findValuesNotFoundInRow(int row) {
+		int returnValue = 0;
+		for (int i = 1 ; i< 10; i++){
+			if (this.getCellInRow(i, row, true) == null )
+				returnValue = i;
+		}
+		return returnValue;
+	}
+	public Cell selectRandomCellToMutate() {
+		int rndValue = new Random().nextInt(cellsToMutate.size());
+	    return cellsToMutate.get(rndValue);		
+	}
+	/*
+	 * Impresión por pantalla
+	 */
 	public String print() {
 		String valueToReturn = "+-------+-------+-------+";
 		valueToReturn = valueToReturn + this.processRow(1);
@@ -128,44 +248,5 @@ public class Sudoku {
 			value = value + Integer.toString(this.getValue(i)) + " ";
 		}
 		return value;
-	}
-
-	public int getValue(int file, int column) {
-		Optional<Cell> celda = this.values.stream().filter(x -> x.getColumn() == column && x.getRow() == file).findFirst();
-		return celda.get().getValue();
-	}
-
-	public int getValue(int i) {
-		Optional<Cell> celda = this.values.stream().filter(x -> x.getLinearPosition() == i).findFirst();
-		return celda.get().getValue();
-	}
-
-	public double evaluate() {
-		return this.getEvaluationMethod().evaluate(this);
-	}
-
-	public EvaluationMethod getEvaluationMethod() {
-		return evaluationMethod;
-	}
-
-	public void setEvaluationMethod(EvaluationMethod evaluationMethod) {
-		this.evaluationMethod = evaluationMethod;
-	}
-
-	public Sudoku setGene(Gene[] genes) {
-		int insertionPosition = 0;
-		for (int i = 0; i < genes.length; i++){
-			while(this.values.get(insertionPosition).isBlocked()){
-				insertionPosition ++;	
-			}
-//			if (!this.values.get(insertionPosition).isBlocked())
-			this.values.get(insertionPosition).setValue((int) genes[i].getAllele());
-			insertionPosition ++;
-		}
-		return this;
-	}
-
-	public int getFreeSpaces() {
-		return 81 - (int) this.values.stream().filter(x -> x.isBlocked()).count();
 	}
 }
