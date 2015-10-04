@@ -3,7 +3,6 @@ package ar.edu.iaa.sudoku.jgap;
 import org.jgap.FitnessFunction;
 import org.jgap.IChromosome;
 
-import ar.edu.iaa.sudoku.domain.PureEvaluate;
 import ar.edu.iaa.sudoku.domain.Sudoku;
 
 public class SolucionFitness extends FitnessFunction {

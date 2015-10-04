@@ -26,6 +26,11 @@ import ar.edu.iaa.sudoku.domain.Sudoku;
  * @since 1.0
  */
 public class SudokuMutation extends BaseGeneticOperator implements Configurable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/** String containing the CVS revision. Read out via reflection! */
 	private final static String CVS_REVISION = "$Revision: 1.49 $";
 
@@ -216,7 +221,7 @@ public class SudokuMutation extends BaseGeneticOperator implements Configurable 
 					}
 					sudokuToEvaluate.setGene(genes);
 					sudokuToEvaluate.evaluate();
-					for (int r = 0; r < sudokuToEvaluate.getCellToMutateSize() /2; r++) {
+					for (int r = 0; r < sudokuToEvaluate.getCellToMutateSize() / 2; r++) {
 						Cell mutateCell = sudokuToEvaluate
 								.selectRandomCellToMutate();
 								//.getRepeatCell(r);
@@ -244,6 +249,7 @@ public class SudokuMutation extends BaseGeneticOperator implements Configurable 
 	 * @author Klaus Meffert
 	 * @since 1.1
 	 */
+	@SuppressWarnings("unused")
 	private void mutateGene(final Gene a_gene, final RandomGenerator a_generator) {
 		for (int k = 0; k < a_gene.size(); k++) {
 			// Retrieve value between 0 and 1 (not included) from generator.
@@ -368,6 +374,10 @@ public class SudokuMutation extends BaseGeneticOperator implements Configurable 
 	}
 
 	class SudokuMutationConfigurable implements java.io.Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		/**
 		 * The current mutation rate used by this SudokuMutation, expressed as
 		 * the denominator in the 1 / X ratio. For example, X = 1000 would mean

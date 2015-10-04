@@ -54,7 +54,7 @@ public class ConfigurationBuilder {
 
 	public ConfigurationBuilder SetCrossoverOperator(){
 		try {
-			this.configuration.addGeneticOperator(new CrossoverOperator(this.configuration, 30));
+			this.configuration.addGeneticOperator(new CrossoverOperator(this.configuration, .30));
 		} catch (InvalidConfigurationException e) {
 			throw new ConfigurationException(e.getMessage());
 		}

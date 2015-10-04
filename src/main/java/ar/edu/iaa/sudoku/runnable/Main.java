@@ -4,8 +4,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.management.RuntimeErrorException;
-
 import org.jgap.Configuration;
 import org.jgap.Genotype;
 import org.jgap.IChromosome;
@@ -24,7 +22,6 @@ public class Main {
 		Sudoku sudokuAResolver = null;
 		sudokuAResolver = new Sudoku(readInput());
 		sudokuAResolver.setEvaluationMethod(new PureEvaluate());
-//		System.out.println(sudokuAResolver.evaluate());
 		
 		ConfigurationFactory configurationFactory=readConfig(sudokuAResolver);
 		Configuration conf = configurationFactory.getConfiguration(0);
@@ -37,12 +34,10 @@ public class Main {
 		System.out.println("\n");
 		for (i = 0; true; i++) {
 
-//			for(int j=0;j<15;j++)
-//				System.out.print("\b");
 			Configuration.reset();
 
-			//genotipe = new Genotype(configurationFactory.getConfiguration(i
-			//		/ (double) maximasEvoluciones), genotipe.getPopulation());
+			genotipe = new Genotype(configurationFactory.getConfiguration(i
+					/ (double) maximasEvoluciones), genotipe.getPopulation());
 
 			genotipe.evolve();
 			bestSolutionSoFar = genotipe.getFittestChromosome();
@@ -51,9 +46,9 @@ public class Main {
 			//logueador.escribir(mejor, bestSolutionSoFar.getFitnessValue(), i);
 
 			if (mejor.evaluate()==5000) {
-				System.out.println("\nGané en la evolución " + i
+				System.out.println("\n\nGané en la evolución " + i
 						+ "!!!!!! ");
-				mejor.print();
+				System.out.print(mejor.print());
 				break;
 			}
 			String value = "\nFittness de la mejor solución: " + bestSolutionSoFar.getFitnessValue();

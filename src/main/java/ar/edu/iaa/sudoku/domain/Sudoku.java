@@ -149,39 +149,54 @@ public class Sudoku {
 		return this.cellsToMutate.get(position);
 	}
 	public int getCellValue(Cell aCell) {
-		return this.getFirstRepeatCell().getGenPosition();
+		return aCell.getGenPosition();
 	}
+    private <T> List<T> intersection(List<T> list1, List<T> list2) {
+        List<T> list = new ArrayList<T>();
+
+        for (T t : list1) {
+            if(list2.contains(t)) {
+                list.add(t);
+            }
+        }
+
+        return list;
+    }	
 	public int getRepeatValueSolution(Cell aCell) {
-		int returnValue = this.findValuesNotFoundInRow(aCell.getRow());
-		if (returnValue == 0)
-			returnValue = this.findValuesNotFoundInColum(aCell.getColumn());
-		if (returnValue == 0)
-			returnValue = new Random().nextInt(10);
+		int returnValue;
+		List<Integer> lista = this.intersection(this.findValuesNotFoundInRow(aCell.getRow()),this.findValuesNotFoundInColum(aCell.getColumn()));
+
+		if (lista.isEmpty())
+			returnValue = new Random().nextInt(10);		
+		else
+			returnValue = lista.get(new Random().nextInt(lista.size()));
 		return returnValue;
 	}
 	public int getCellToMutateSize(){
 		return cellsToMutate.size();
 	}
-	private int findValuesNotFoundInColum(int col) {
-		int returnValue = 0;
+	private List<Integer> findValuesNotFoundInColum(int col) {
+		List<Integer> returnValue = new ArrayList<>();
 		for (int i = 1 ; i< 10; i++){
 			if (this.getCellInColumn(i, col, true) == null )
-				returnValue = i;
+				returnValue.add(i); // = i;
 		}
 		return returnValue;
 	}
 	
-	private int findValuesNotFoundInRow(int row) {
-		int returnValue = 0;
+	private List<Integer> findValuesNotFoundInRow(int row) {
+		List<Integer> returnValue = new ArrayList<>();
 		for (int i = 1 ; i< 10; i++){
 			if (this.getCellInRow(i, row, true) == null )
-				returnValue = i;
+				returnValue.add(i); // = i;
 		}
 		return returnValue;
 	}
 	public Cell selectRandomCellToMutate() {
 		int rndValue = new Random().nextInt(cellsToMutate.size());
-	    return cellsToMutate.get(rndValue);		
+		Cell retunCell =cellsToMutate.get(rndValue); 
+		cellsToMutate.remove(rndValue);
+	    return retunCell;
 	}
 	/*
 	 * Impresión por pantalla
