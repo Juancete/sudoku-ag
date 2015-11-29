@@ -20,7 +20,10 @@ public class Main {
 		
 		
 		Sudoku sudokuAResolver = null;
-		sudokuAResolver = new Sudoku(readInput());
+		if (args.length == 1)
+			sudokuAResolver = new Sudoku(readInput(args[0]));
+		else
+			sudokuAResolver = new Sudoku(readInput());
 		sudokuAResolver.setEvaluationMethod(new PureEvaluate());
 		
 		ConfigurationFactory configurationFactory=readConfig(sudokuAResolver);
@@ -62,12 +65,14 @@ public class Main {
 			System.out.println("perdí :(");
 		logueador.close();
 	}
-
 	private static String readInput() {
+		return readInput("input.properties");
+	}
+	private static String readInput(String value) {
 		Properties prop = new Properties();
 		InputStream input = null;
 		try {
-			input = new FileInputStream("input.properties");
+			input = new FileInputStream(value);
 			prop.load(input);
 		} catch (Exception e) {
 			System.out
