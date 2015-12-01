@@ -40,6 +40,8 @@ public class Sudoku {
 		double result = (double)values.stream().filter(x -> x.equalsRow(row) && x.getValue() == valueTofind).count()==0?0:(double)values.stream().filter(x -> x.equalsRow(row) && x.getValue() == valueTofind).count()-1;
 		if (result > 0)
 			this.cellsToMutate.add(this.getCellInRow( valueTofind,row,false));
+		else if (new Random().nextInt(25)==0 && this.getCellInRow(valueTofind,row,false) != null)
+			this.cellsToMutate.add(this.getCellInRow( valueTofind,row,false));
 		return result; 
 	}
 
@@ -56,6 +58,8 @@ public class Sudoku {
 		double result = (double)values.stream().filter(x -> x.equalsColumn(column) && x.getValue() == valueTofind).count()==0?0:(double)values.stream().filter(x -> x.equalsColumn(column) && x.getValue() == valueTofind).count()-1;
 		if (result > 0)
 			this.cellsToMutate.add(this.getCellInColumn( valueTofind,column,false));
+		else if (new Random().nextInt(25)==0 && this.getCellInColumn(valueTofind,column,false) != null)
+			this.cellsToMutate.add(this.getCellInColumn(valueTofind,column,false));
 		return result;		
 	}
 	

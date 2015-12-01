@@ -221,7 +221,7 @@ public class SudokuMutation extends BaseGeneticOperator implements Configurable 
 					}
 					sudokuToEvaluate.setGene(genes);
 					sudokuToEvaluate.evaluate();
-					for (int r = 0; r < sudokuToEvaluate.getCellToMutateSize() / 2; r++) {
+					for (int r = 0; r < sudokuToEvaluate.getCellToMutateSize() *3 /2 ; r++) {
 						Cell mutateCell = sudokuToEvaluate
 								.selectRandomCellToMutate();
 								//.getRepeatCell(r);
